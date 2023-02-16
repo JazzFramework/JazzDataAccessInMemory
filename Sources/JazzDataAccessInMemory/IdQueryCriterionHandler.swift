@@ -6,6 +6,6 @@ public final class IdQueryCriterionHandler<TResource: Storable>: BaseCriterionHa
     }
 
     public override final func process(for query: InMemoryQuery<TResource>, with criterion: IdQueryCriterion) {
-        query.data = query.data.filter({$0.getId() == criterion.getId()});
+        query.set(data: query.getData().filter({ $0.getId() == criterion.getId() }));
     }
 }

@@ -1,3 +1,3 @@
 # JazzDataAccessInMemory
 
-A description of this package.
+InMemory data access support for the Jazz Framework DataAccess module.

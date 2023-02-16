@@ -4,6 +4,7 @@ import JazzDataAccess;
 
 public final class InMemoryRepository<TResource: Storable>: Repository<TResource> {
     private var data: [String: TResource];
+
     private let lock: NSLock;
 
     private let criterionProcessor: CriterionProcessor<TResource>;
@@ -19,34 +20,34 @@ public final class InMemoryRepository<TResource: Storable>: Repository<TResource
         super.init();
     }
 
-    public final override func create(_ model: TResource, with hints: [QueryHint]) async throws -> TResource {
-        return lock.withLock() {
-            data[model.getId()] = model;
+    public final override func create(_ models: [TResource], with hints: [QueryHint]) async throws -> [TResource] {
+        for model in models {
+            lock.withLock() {
+                data[model.getId()] = model;
+            }
+        }
 
-            return model;
+        return models;
+    }
+
+    public final override func delete(for criteria: [QueryCriterion], with hints: [QueryHint]) async throws {
+        let toDelete: [TResource] = try await get(for: criteria, with: hints);
+
+        for model in toDelete {
+            _ = lock.withLock() {
+                data.removeValue(forKey: model.getId());
+            }
         }
     }
 
-    public final override func delete(id: String, with hints: [QueryHint]) async throws {
-        _ = lock.withLock() {
-            data.removeValue(forKey: id);
-        }
-    }
-
-    public final override func update(_ model: TResource, with hints: [QueryHint]) async throws -> TResource {
-        return lock.withLock() {
-            data[model.getId()] = model;
-
-            return model;
-        }
-    }
-
-    public final override func get(id: String, with hints: [QueryHint]) async throws -> TResource {
-        if let result: TResource = data[id] {
-            return result;
+    public final override func update(_ models: [TResource], with hints: [QueryHint]) async throws -> [TResource] {
+        for model in models {
+            lock.withLock() {
+                data[model.getId()] = model;
+            }
         }
 
-        throw DataAccessErrors.notFound(reason: "Could not find resource for \(id).");
+        return models;
     }
 
     public final override func get(for criteria: [QueryCriterion], with hints: [QueryHint]) async throws -> [TResource] {
@@ -56,7 +57,7 @@ public final class InMemoryRepository<TResource: Storable>: Repository<TResource
 
         try hintProcessor.handle(for: query, with: hints);
 
-        return query.data;
+        return query.getData();
     }
 
     private func getQuery() -> InMemoryQuery<TResource> {

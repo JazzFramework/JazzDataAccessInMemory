@@ -6,6 +6,6 @@ public final class MaxResultsHintHandler<TResource: Storable>: BaseHintHandler<T
     }
 
     public override final func process(for query: InMemoryQuery<TResource>, with hint: MaxResultsHint) {
-        query.data = Array(query.data.prefix(hint.getCount()));
+        query.set(data: Array(query.getData().prefix(hint.getCount())));
     }
 }

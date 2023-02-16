@@ -1,7 +1,8 @@
-import XCTest
-@testable import JazzDataAccessInMemory
+import XCTest;
 
-final class JazzDataAccessInMemoryTests: XCTestCase {
+@testable import JazzDataAccessInMemory;
+
+final class InMemoryRepositoryTests: XCTestCase {
     func testExample() throws {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct

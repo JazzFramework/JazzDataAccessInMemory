@@ -9,9 +9,7 @@ public final class InMemoryQuery<TResource: Storable>: Query<TResource> {
         super.init();
     }
 
-    public final func getData() -> [TResource] {
-        return data;
-    }
+    public final func getData() -> [TResource] { data }
 
     internal final func set(data: [TResource]) {
         self.data = data;

@@ -1,7 +1,7 @@
 import JazzDataAccess;
 
-public final class MaxResultsHintHandler<TResource: Storable>: BaseHintHandler<TResource, InMemoryQuery<TResource>, MaxResultsHint> {
-    public override init() {
+internal final class MaxResultsHintHandler<TResource: Storable>: BaseHintHandler<TResource, InMemoryQuery<TResource>, MaxResultsHint> {
+    internal override init() {
         super.init();
     }
 

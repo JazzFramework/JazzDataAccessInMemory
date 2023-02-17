@@ -1,7 +1,7 @@
 import JazzDataAccess;
 
-public final class IdsQueryCriterionHandler<TResource: Storable>: BaseCriterionHandler<TResource, InMemoryQuery<TResource>, IdsQueryCriterion> {
-    public override init() {
+internal final class IdsQueryCriterionHandler<TResource: Storable>: BaseCriterionHandler<TResource, InMemoryQuery<TResource>, IdsQueryCriterion> {
+    internal override init() {
         super.init();
     }
 

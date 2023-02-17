@@ -21,6 +21,8 @@ let package = Package(
         .target(
             name: "JazzDataAccessInMemory",
             dependencies: [
+                .product(name: "JazzCodec", package: "Jazz"),
+                .product(name: "JazzCore", package: "Jazz"),
                 .product(name: "JazzDataAccess", package: "Jazz"),
             ]
         ),

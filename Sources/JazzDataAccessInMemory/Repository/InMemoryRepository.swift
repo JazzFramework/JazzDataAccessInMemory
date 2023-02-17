@@ -2,7 +2,7 @@ import Foundation;
 
 import JazzDataAccess;
 
-public final class InMemoryRepository<TResource: Storable>: Repository<TResource> {
+internal final class InMemoryRepository<TResource: Storable>: Repository<TResource> {
     private var data: [String: TResource];
 
     private let lock: NSLock;
@@ -10,7 +10,7 @@ public final class InMemoryRepository<TResource: Storable>: Repository<TResource
     private let criterionProcessor: CriterionProcessor<TResource>;
     private let hintProcessor: HintProcessor<TResource>;
 
-    public init(criterionProcessor: CriterionProcessor<TResource>, hintProcessor: HintProcessor<TResource>) {        
+    internal init(criterionProcessor: CriterionProcessor<TResource>, hintProcessor: HintProcessor<TResource>) {        
         data = [:];
         lock = NSLock();
 
@@ -31,7 +31,7 @@ public final class InMemoryRepository<TResource: Storable>: Repository<TResource
     }
 
     public final override func delete(for criteria: [QueryCriterion], with hints: [QueryHint]) async throws {
-        let toDelete: [TResource] = try await get(for: criteria, with: hints);
+        let toDelete: [TResource] = try await get(for: criteria, with: hints).getData();
 
         for model in toDelete {
             _ = lock.withLock() {
@@ -50,17 +50,17 @@ public final class InMemoryRepository<TResource: Storable>: Repository<TResource
         return models;
     }
 
-    public final override func get(for criteria: [QueryCriterion], with hints: [QueryHint]) async throws -> [TResource] {
+    public final override func get(for criteria: [QueryCriterion], with hints: [QueryHint]) async throws -> PaginationResult<TResource> {
         let query: InMemoryQuery<TResource> = getQuery();
 
         try criterionProcessor.handle(for: query, with: criteria);
 
         try hintProcessor.handle(for: query, with: hints);
 
-        return query.getData();
+        return PaginationResult(data: query.getData(), page: 0, total: 0);
     }
 
-    private func getQuery() -> InMemoryQuery<TResource> {
+    private final func getQuery() -> InMemoryQuery<TResource> {
         return InMemoryQuery<TResource>(data: Array(data.values));
     }
 }
